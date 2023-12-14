@@ -1,0 +1,13 @@
+[project]
+name = "servier-de-python-test"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "William Phetsinorath", email = "william.phetsinorath@shikanime.studio"},
+]
+dependencies = []
+requires-python = "==3.10.*"
+readme = "README.md"
+
+[tool.pdm]
+package-type = "application"
