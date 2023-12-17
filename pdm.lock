@@ -5,7 +5,7 @@
 groups = ["default", "notebook", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:f760d135f0c257be97a565f1b84940bd0ad8ae5c69055403dbe75a8c662cc7f1"
+content_hash = "sha256:3d317330ee4d3a61c5ed4b258a69aa458c4fead9e291a830ad4d9b8e3fec0937"
 
 [[package]]
 name = "aiohttp"
@@ -123,6 +123,12 @@ files = [
     {file = "apache_beam-2.52.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dc14539d6af4c352d06c99a9ecd4ee4094a59ab08baa4b179bd15c5cce9af51f"},
     {file = "apache_beam-2.52.0-cp310-cp310-win32.whl", hash = "sha256:de56394172a3c8ed41a3602653be0c5f04d11f46dc501fdb3f303407ca3727e0"},
     {file = "apache_beam-2.52.0-cp310-cp310-win_amd64.whl", hash = "sha256:e5b177295a540543ad10816af07b96b1640a0933e2355af9daab35b8a6b57773"},
+    {file = "apache_beam-2.52.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:141801073382370b17f8f3e891fb73321e0a746821424cb0375bfbb3c65b9883"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:52918585a2aa22c67b939b87cc607c439f4530b8a4a5ddda8270f00206f626c8"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:048a1744f3098ea78f4c004f1cf19396826b4195f657d802d17d8fcdc32706b1"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f0034d074f1620d8b836311cf5e8e78f7a5a57259fa3762596f817b3f4e37530"},
+    {file = "apache_beam-2.52.0-cp311-cp311-win32.whl", hash = "sha256:bd627f2624de589ecdf7d60dd98d499853ca82ce82001cfe24082e67da958e35"},
+    {file = "apache_beam-2.52.0-cp311-cp311-win_amd64.whl", hash = "sha256:8d9a50e150e84cad4f024297f4f20f3f8767cc7ab3a937029f89dbc40c3bdcb8"},
 ]
 
 [[package]]
@@ -154,6 +160,39 @@ files = [
     {file = "apache_beam-2.52.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dc14539d6af4c352d06c99a9ecd4ee4094a59ab08baa4b179bd15c5cce9af51f"},
     {file = "apache_beam-2.52.0-cp310-cp310-win32.whl", hash = "sha256:de56394172a3c8ed41a3602653be0c5f04d11f46dc501fdb3f303407ca3727e0"},
     {file = "apache_beam-2.52.0-cp310-cp310-win_amd64.whl", hash = "sha256:e5b177295a540543ad10816af07b96b1640a0933e2355af9daab35b8a6b57773"},
+    {file = "apache_beam-2.52.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:141801073382370b17f8f3e891fb73321e0a746821424cb0375bfbb3c65b9883"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:52918585a2aa22c67b939b87cc607c439f4530b8a4a5ddda8270f00206f626c8"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:048a1744f3098ea78f4c004f1cf19396826b4195f657d802d17d8fcdc32706b1"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f0034d074f1620d8b836311cf5e8e78f7a5a57259fa3762596f817b3f4e37530"},
+    {file = "apache_beam-2.52.0-cp311-cp311-win32.whl", hash = "sha256:bd627f2624de589ecdf7d60dd98d499853ca82ce82001cfe24082e67da958e35"},
+    {file = "apache_beam-2.52.0-cp311-cp311-win_amd64.whl", hash = "sha256:8d9a50e150e84cad4f024297f4f20f3f8767cc7ab3a937029f89dbc40c3bdcb8"},
+]
+
+[[package]]
+name = "apache-beam"
+version = "2.52.0"
+extras = ["dataframe"]
+requires_python = ">=3.8"
+summary = "Apache Beam SDK for Python"
+groups = ["notebook"]
+dependencies = [
+    "apache-beam==2.52.0",
+    "pandas!=1.5.0,!=1.5.1,<1.6,>=1.4.3; python_version >= \"3.8\"",
+]
+files = [
+    {file = "apache-beam-2.52.0.tar.gz", hash = "sha256:605ca0c80ea34d5af43eb7c6f8697b8fff7f799f271f286fb861aadc32d7148c"},
+    {file = "apache_beam-2.52.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:190fe92a715125ffade65877ff788b5ff17fbfe2bb72736b918e6b7015242741"},
+    {file = "apache_beam-2.52.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7a53ea95003392fd8ed614644155f6bb5471ac50812ecc1daf0c5bd758f774d6"},
+    {file = "apache_beam-2.52.0-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:dca7408e9ef960e7a3ee7f44e1ffc8f1b0a8c383001eeb03a59583c3fbb8b478"},
+    {file = "apache_beam-2.52.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dc14539d6af4c352d06c99a9ecd4ee4094a59ab08baa4b179bd15c5cce9af51f"},
+    {file = "apache_beam-2.52.0-cp310-cp310-win32.whl", hash = "sha256:de56394172a3c8ed41a3602653be0c5f04d11f46dc501fdb3f303407ca3727e0"},
+    {file = "apache_beam-2.52.0-cp310-cp310-win_amd64.whl", hash = "sha256:e5b177295a540543ad10816af07b96b1640a0933e2355af9daab35b8a6b57773"},
+    {file = "apache_beam-2.52.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:141801073382370b17f8f3e891fb73321e0a746821424cb0375bfbb3c65b9883"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:52918585a2aa22c67b939b87cc607c439f4530b8a4a5ddda8270f00206f626c8"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:048a1744f3098ea78f4c004f1cf19396826b4195f657d802d17d8fcdc32706b1"},
+    {file = "apache_beam-2.52.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f0034d074f1620d8b836311cf5e8e78f7a5a57259fa3762596f817b3f4e37530"},
+    {file = "apache_beam-2.52.0-cp311-cp311-win32.whl", hash = "sha256:bd627f2624de589ecdf7d60dd98d499853ca82ce82001cfe24082e67da958e35"},
+    {file = "apache_beam-2.52.0-cp311-cp311-win_amd64.whl", hash = "sha256:8d9a50e150e84cad4f024297f4f20f3f8767cc7ab3a937029f89dbc40c3bdcb8"},
 ]
 
 [[package]]
@@ -730,7 +769,9 @@ groups = ["notebook"]
 dependencies = [
     "google-api-core==2.15.0",
     "grpcio-status<2.0.dev0,>=1.33.2",
+    "grpcio-status<2.0.dev0,>=1.49.1; python_version >= \"3.11\"",
     "grpcio<2.0dev,>=1.33.2",
+    "grpcio<2.0dev,>=1.49.1; python_version >= \"3.11\"",
 ]
 files = [
     {file = "google-api-core-2.15.0.tar.gz", hash = "sha256:abc978a72658f14a2df1e5e12532effe40f94f868f6e23d95133bd6abcca35ca"},
@@ -1667,6 +1708,7 @@ summary = "Powerful data structures for data analysis, time series, and statisti
 groups = ["notebook"]
 dependencies = [
     "numpy>=1.21.0; python_version >= \"3.10\"",
+    "numpy>=1.23.2; python_version >= \"3.11\"",
     "python-dateutil>=2.8.1",
     "pytz>=2020.1",
 ]
