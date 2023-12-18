@@ -1,6 +1,5 @@
 """Input/output utilities for the Servier de Python project."""
 
-import typing
 import apache_beam as beam
 from apache_beam.transforms.ptransform import ptransform_fn
 
