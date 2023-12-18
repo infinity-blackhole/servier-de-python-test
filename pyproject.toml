@@ -5,7 +5,9 @@ description = "Servier Data Engineer Python Test Solutions"
 authors = [
     { name = "William Phetsinorath", email = "william.phetsinorath@shikanime.studio" },
 ]
-dependencies = ["apache-beam>=2.52.0"]
+dependencies = [
+    "apache-beam>=2.52.0",
+]
 requires-python = ">=3.10"
 readme = "README.md"
 license = { text = "MIT" }
