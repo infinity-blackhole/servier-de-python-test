@@ -60,14 +60,10 @@ def run():
             | "FlattenPubmed" >> beam.Flatten()
             | SplitPubmedTitleByWord()
         )
-        drugs = (
-            [
-                p | f"ReadFromDrugs{i}" >> ReadFromDrugs(path)
-                for i, path in enumerate(args.drugs_dataset_path)
-            ]
-            | "FlattenDrug" >> beam.Flatten()
-            | beam.Map(lambda element: (element.name, element))
-        )
+        drugs = [
+            p | f"ReadFromDrugs{i}" >> ReadFromDrugs(path)
+            for i, path in enumerate(args.drugs_dataset_path)
+        ] | "FlattenDrug" >> beam.Flatten()
 
         (
             drugs
