@@ -77,12 +77,8 @@ def run():
         )
 
         (
-            (
-                drugs,
-                clinical_trials,
-                pubmed,
-            )
-            | MatchDrugs()
+            drugs
+            | MatchDrugs(clinical_trials=clinical_trials, pubmed=pubmed)
             | WriteDrugMention(args.output)
         )
 
