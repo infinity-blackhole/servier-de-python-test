@@ -6,7 +6,8 @@ import typing
 import apache_beam as beam
 from apache_beam.transforms.ptransform import ptransform_fn
 
-from .io import ClinicalTrial, Mention, Pubmed
+from servier_de_python.schemas import Drug
+from servier_de_python.io import ClinicalTrial, Mention, Pubmed
 
 T = typing.TypeVar("T")
 
@@ -46,7 +47,8 @@ def SplitPubmedTitleByWord(
 
 @ptransform_fn
 def MatchClinicalTrialDrugs(
-    pcolls: typing.Tuple[beam.PCollection, beam.PCollection],
+    pcoll: beam.PCollection[Drug],
+    clinical_trials: beam.PCollection[ClinicalTrial],
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in ClinicalTrial elements."""
 
@@ -65,8 +67,8 @@ def MatchClinicalTrialDrugs(
 
     return (
         {
-            "drugs": pcolls[0],
-            "clinical_trials": pcolls[1],
+            "drugs": pcoll,
+            "clinical_trials": clinical_trials,
         }
         | beam.CoGroupByKey()
         | beam.FlatMap(_unnest)
@@ -75,7 +77,8 @@ def MatchClinicalTrialDrugs(
 
 @ptransform_fn
 def MatchPubmedDrugs(
-    pcolls: typing.Tuple[beam.PCollection, beam.PCollection],
+    pcoll: beam.PCollection[Drug],
+    pubmed: beam.PCollection[Pubmed],
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in Pubmed elements."""
 
@@ -93,23 +96,20 @@ def MatchPubmedDrugs(
                 )
 
     return (
-        {
-            "drugs": pcolls[0],
-            "pubmed": pcolls[1],
-        }
-        | beam.CoGroupByKey()
-        | beam.FlatMap(_unnest)
+        {"drugs": pcoll, "pubmed": pubmed} | beam.CoGroupByKey() | beam.FlatMap(_unnest)
     )
 
 
 @ptransform_fn
 def MatchDrugs(
-    pcolls: typing.Tuple[beam.PCollection, beam.PCollection, beam.PCollection],
+    pcoll: beam.PCollection[Drug],
+    clinical_trials: beam.PCollection[ClinicalTrial],
+    pubmed: beam.PCollection[Pubmed],
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in Pubmed elements."""
 
-    clinical_trials_mentions = (pcolls[0], pcolls[1]) | MatchClinicalTrialDrugs()
-    pubmed_mentions = (pcolls[0], pcolls[2]) | MatchPubmedDrugs()
+    clinical_trials_mentions = pcoll | MatchClinicalTrialDrugs(clinical_trials)
+    pubmed_mentions = pcoll | MatchPubmedDrugs(pubmed)
 
     return (
         clinical_trials_mentions,
