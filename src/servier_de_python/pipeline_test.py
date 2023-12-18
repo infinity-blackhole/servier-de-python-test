@@ -25,8 +25,7 @@ def test_clinical_trial_title_by_word():
     with TestPipeline() as p:
         out = (
             p
-            | "ReadFiles"
-            >> ReadFromClinicalTrials(
+            | ReadFromClinicalTrials(
                 simple_clinical_trials_path,
             )
             | SplitClinicalTrialTitleByWord()
@@ -61,11 +60,7 @@ def test_clinical_trial_title_by_word():
 
 def test_pubmed_title_by_word():
     with TestPipeline() as p:
-        out = (
-            p
-            | "ReadFiles" >> ReadFromPubmeds(simple_pubmeds_path)
-            | SplitPubmedTitleByWord()
-        )
+        out = p | ReadFromPubmeds(simple_pubmeds_path) | SplitPubmedTitleByWord()
 
         assert_that(
             out,
@@ -96,7 +91,7 @@ def test_pubmed_title_by_word():
 
 def test_drugs():
     with TestPipeline() as p:
-        out = p | "ReadFiles" >> ReadFromDrugs(simbple_drugs_path)
+        out = p | ReadFromDrugs(simbple_drugs_path)
 
         assert_that(
             out,
