@@ -7,17 +7,17 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
 from servier_de_python.io import (
+    Drug,
     ReadFromClinicalTrials,
     ReadFromDrugs,
-    ReadFromPubmed,
+    ReadFromPubmeds,
     WriteDrugMention,
-    Drug,
 )
 from servier_de_python.transforms import (
-    SplitClinicalTrialTitleByWord,
-    SplitPubmedTitleByWord,
     MatchClinicalTrialDrugs,
     MatchPubmedDrugs,
+    SplitClinicalTrialTitleByWord,
+    SplitPubmedTitleByWord,
 )
 
 
@@ -57,7 +57,7 @@ def run():
         )
         pubmed = (
             tuple(
-                p | f"ReadFromPubmed{i}" >> ReadFromPubmed(path)
+                p | f"ReadFromPubmeds{i}" >> ReadFromPubmeds(path)
                 for i, path in enumerate(args.pubmed_dataset_path)
             )
             | "FlattenPubmed" >> beam.Flatten()
