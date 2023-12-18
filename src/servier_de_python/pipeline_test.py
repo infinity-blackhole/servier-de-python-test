@@ -11,9 +11,9 @@ from servier_de_python.io import (
     ReadFromPubmeds,
 )
 from servier_de_python.testing.fixtures import (
+    simbple_drugs_path,
     simple_clinical_trials_path,
     simple_pubmeds_path,
-    simbple_drugs_path,
 )
 from servier_de_python.transforms import (
     SplitClinicalTrialTitleByWord,
