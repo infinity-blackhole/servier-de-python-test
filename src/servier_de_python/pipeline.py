@@ -8,16 +8,13 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 from servier_de_python.io import (
     Drug,
-    Mention,
     ReadFromClinicalTrials,
     ReadFromDrugs,
     ReadFromPubmeds,
     WriteDrugMention,
 )
 from servier_de_python.transforms import (
-    MatchClinicalTrialDrugs,
     MatchDrugs,
-    MatchPubmedDrugs,
     SplitClinicalTrialTitleByWord,
     SplitPubmedTitleByWord,
 )
@@ -77,12 +74,8 @@ def run():
         )
 
         (
-            (
-                drugs,
-                clinical_trials,
-                pubmed,
-            )
-            | MatchDrugs()
+            drugs
+            | MatchDrugs(clinical_trials=clinical_trials, pubmed=pubmed)
             | WriteDrugMention(args.output)
         )
 
