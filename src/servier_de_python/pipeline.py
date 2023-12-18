@@ -47,30 +47,28 @@ def run():
 
     with beam.Pipeline(options=PipelineOptions(options)) as p:
         clinical_trials = (
-            tuple(
+            [
                 p | f"ReadFromClinicalTrials{i}" >> ReadFromClinicalTrials(path)
                 for i, path in enumerate(args.clinical_trials_dataset_path)
-            )
+            ]
             | "FlattenClinicalTrial" >> beam.Flatten()
             | SplitClinicalTrialTitleByWord()
         )
         pubmed = (
-            tuple(
+            [
                 p | f"ReadFromPubmeds{i}" >> ReadFromPubmeds(path)
                 for i, path in enumerate(args.pubmed_dataset_path)
-            )
+            ]
             | "FlattenPubmed" >> beam.Flatten()
             | SplitPubmedTitleByWord()
         )
         drugs = (
-            tuple(
+            [
                 p | f"ReadFromDrugs{i}" >> ReadFromDrugs(path)
                 for i, path in enumerate(args.drugs_dataset_path)
-            )
+            ]
             | "FlattenDrug" >> beam.Flatten()
-            | beam.Map(lambda element: (element.name, element)).with_output_types(
-                typing.Tuple[str, Drug]
-            )
+            | beam.Map(lambda element: (element.name, element))
         )
 
         (
