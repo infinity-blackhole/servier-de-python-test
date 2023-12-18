@@ -119,7 +119,7 @@ def ReadFromPubmeds(pcoll: beam.PCollection, path: str) -> beam.PCollection[Pubm
 
 
 @ptransform_fn
-def WriteDrugMention(
+def WriteDrugMentions(
     pcoll: beam.PCollection[Mention], path: str
 ) -> beam.PCollection[Mention]:
     """A Beam PTransform for writing drug mentions to a JSON file."""

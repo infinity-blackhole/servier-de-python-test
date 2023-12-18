@@ -47,7 +47,7 @@ def SplitPubmedTitleByWord(
 
 
 @ptransform_fn
-def MatchClinicalTrialDrugs(
+def MatchClinicalTrialDrugMentions(
     pcoll: beam.PCollection[Drug],
     clinical_trials: beam.PCollection[ClinicalTrial],
 ) -> beam.PCollection[Mention]:
@@ -77,7 +77,7 @@ def MatchClinicalTrialDrugs(
 
 
 @ptransform_fn
-def MatchPubmedDrugs(
+def MatchPubmedDrugMentions(
     pcoll: beam.PCollection[Drug],
     pubmed: beam.PCollection[Pubmed],
 ) -> beam.PCollection[Mention]:
@@ -102,15 +102,15 @@ def MatchPubmedDrugs(
 
 
 @ptransform_fn
-def MatchDrugs(
+def MatchDrugMentions(
     pcoll: beam.PCollection[Drug],
     clinical_trials: beam.PCollection[ClinicalTrial],
     pubmed: beam.PCollection[Pubmed],
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in Pubmed elements."""
 
-    clinical_trials_mentions = pcoll | MatchClinicalTrialDrugs(clinical_trials)
-    pubmed_mentions = pcoll | MatchPubmedDrugs(pubmed)
+    clinical_trials_mentions = pcoll | MatchClinicalTrialDrugMentions(clinical_trials)
+    pubmed_mentions = pcoll | MatchPubmedDrugMentions(pubmed)
 
     return (
         clinical_trials_mentions,
