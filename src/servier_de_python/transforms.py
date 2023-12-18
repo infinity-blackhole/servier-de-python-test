@@ -7,11 +7,15 @@ import apache_beam as beam
 
 from .io import ClinicalTrial, Mention, Pubmed
 
+T = typing.TypeVar("T")
+
 
 class SplitTitleByWord(beam.PTransform):
     """A Beam transform that splits the title of an element by word."""
 
-    def expand(self, pcoll):
+    def expand(
+        self, pcoll: beam.PCollection[T]
+    ) -> beam.PCollection[typing.Tuple[str, T]]:
         def _split(element):
             words = element.title.translate(
                 str.maketrans("", "", string.punctuation)
@@ -19,29 +23,25 @@ class SplitTitleByWord(beam.PTransform):
             for word in words:
                 yield (word.upper(), element)
 
-        return pcoll | beam.FlatMap(_split).with_output_types(
-            typing.Tuple[str, typing.Any]
-        )
+        return pcoll | beam.FlatMap(_split)
 
 
 class SplitClinicalTrialTitleByWord(beam.PTransform):
     """A Beam transform that splits the title of a ClinicalTrial element by word."""
 
-    def expand(self, pcoll):
-        return (
-            pcoll
-            | "ClinicalTrialTitleByWord"
-            >> SplitTitleByWord().with_output_types(typing.Tuple[str, ClinicalTrial])
-        )
+    def expand(
+        self, pcoll: beam.PCollection[ClinicalTrial]
+    ) -> beam.PCollection[typing.Tuple[str, ClinicalTrial]]:
+        return pcoll | "ClinicalTrialTitleByWord" >> SplitTitleByWord()
 
 
 class SplitPubmedTitleByWord(beam.PTransform):
     """A Beam transform that splits the title of a Pubmed element by word."""
 
-    def expand(self, pcoll):
-        return pcoll | "PubmedTitleByWord" >> SplitTitleByWord().with_output_types(
-            typing.Tuple[str, Pubmed]
-        )
+    def expand(
+        self, pcoll: beam.PCollection[Pubmed]
+    ) -> beam.PCollection[typing.Tuple[str, Pubmed]]:
+        return pcoll | "PubmedTitleByWord" >> SplitTitleByWord()
 
 
 class MatchClinicalTrialDrugs(beam.PTransform):
@@ -49,7 +49,7 @@ class MatchClinicalTrialDrugs(beam.PTransform):
 
     def expand(
         self, pcolls: typing.Tuple[beam.PCollection, beam.PCollection]
-    ) -> beam.PCollection:
+    ) -> beam.PCollection[Mention]:
         def _unnest(element):
             for drug in element[1]["drugs"]:
                 for clinical_trial in element[1]["clinical_trials"]:
@@ -69,7 +69,7 @@ class MatchClinicalTrialDrugs(beam.PTransform):
                 "clinical_trials": pcolls[1],
             }
             | beam.CoGroupByKey()
-            | beam.FlatMap(_unnest).with_output_types(Mention)
+            | beam.FlatMap(_unnest)
         )
 
 
@@ -78,7 +78,7 @@ class MatchPubmedDrugs(beam.PTransform):
 
     def expand(
         self, pcolls: typing.Tuple[beam.PCollection, beam.PCollection]
-    ) -> beam.PCollection:
+    ) -> beam.PCollection[Mention]:
         def _unnest(element):
             for drug in element[1]["drugs"]:
                 for pubmed in element[1]["pubmed"]:
@@ -98,5 +98,5 @@ class MatchPubmedDrugs(beam.PTransform):
                 "pubmed": pcolls[1],
             }
             | beam.CoGroupByKey()
-            | beam.FlatMap(_unnest).with_output_types(Mention)
+            | beam.FlatMap(_unnest)
         )
