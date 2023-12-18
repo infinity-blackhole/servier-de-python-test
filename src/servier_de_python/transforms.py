@@ -56,7 +56,9 @@ def MatchClinicalTrialDrugMentions(
     def _join(element, drugs):
         for drug in drugs:
             matcher = SequenceMatcher(
-                lambda x: x in string.punctuation, element[0], drug.name
+                lambda x: x in string.punctuation,
+                drug.name,
+                element[0],
             )
             if matcher.ratio() < threshold:
                 continue
@@ -85,7 +87,9 @@ def MatchPubmedDrugMentions(
     def _join(element, drugs):
         for drug in drugs:
             matcher = SequenceMatcher(
-                lambda x: x in string.punctuation, element[0], drug.name
+                lambda x: x in string.punctuation,
+                drug.name,
+                element[0],
             )
 
             if matcher.ratio() < threshold:
