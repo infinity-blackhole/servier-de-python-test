@@ -1,20 +1,18 @@
 """Pipeline to find drug mentions in clinical trials and pubmed articles. """
 
 import argparse
-import typing
 
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
 from servier_de_python.io import (
-    Drug,
     ReadFromClinicalTrials,
     ReadFromDrugs,
     ReadFromPubmeds,
-    WriteDrugMention,
+    WriteDrugMentions,
 )
 from servier_de_python.transforms import (
-    MatchDrugs,
+    MatchDrugMentions,
     SplitClinicalTrialTitleByWord,
     SplitPubmedTitleByWord,
 )
@@ -47,36 +45,34 @@ def run():
 
     with beam.Pipeline(options=PipelineOptions(options)) as p:
         clinical_trials = (
-            tuple(
+            [
                 p | f"ReadFromClinicalTrials{i}" >> ReadFromClinicalTrials(path)
                 for i, path in enumerate(args.clinical_trials_dataset_path)
-            )
+            ]
             | "FlattenClinicalTrial" >> beam.Flatten()
             | SplitClinicalTrialTitleByWord()
         )
         pubmed = (
-            tuple(
+            [
                 p | f"ReadFromPubmeds{i}" >> ReadFromPubmeds(path)
                 for i, path in enumerate(args.pubmed_dataset_path)
-            )
+            ]
             | "FlattenPubmed" >> beam.Flatten()
             | SplitPubmedTitleByWord()
         )
         drugs = (
-            tuple(
+            [
                 p | f"ReadFromDrugs{i}" >> ReadFromDrugs(path)
                 for i, path in enumerate(args.drugs_dataset_path)
-            )
+            ]
             | "FlattenDrug" >> beam.Flatten()
-            | beam.Map(lambda element: (element.name, element)).with_output_types(
-                typing.Tuple[str, Drug]
-            )
+            | beam.Map(lambda element: (element.name, element))
         )
 
         (
             drugs
-            | MatchDrugs(clinical_trials=clinical_trials, pubmed=pubmed)
-            | WriteDrugMention(args.output)
+            | MatchDrugMentions(clinical_trials=clinical_trials, pubmed=pubmed)
+            | WriteDrugMentions(args.output)
         )
 
 
