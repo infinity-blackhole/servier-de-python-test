@@ -43,6 +43,7 @@ def SplitPubmedTitleByWord(
     pcoll: beam.PCollection[Pubmed],
 ) -> beam.PCollection[typing.Tuple[str, Pubmed]]:
     """A Beam transform that splits the title of a Pubmed element by word."""
+
     return pcoll | "PubmedTitleByWord" >> SplitTitleByWord()
 
 

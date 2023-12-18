@@ -45,7 +45,9 @@ class Mention(typing.NamedTuple):
 
 
 @ptransform_fn
-def RowAsClinicalTrial(pcoll: beam.PCollection) -> beam.PCollection[ClinicalTrial]:
+def RowAsClinicalTrial(
+    pcoll: beam.PCollection[beam.Row],
+) -> beam.PCollection[ClinicalTrial]:
     return pcoll | beam.Map(
         lambda row: ClinicalTrial(
             id=row.id,
@@ -57,7 +59,7 @@ def RowAsClinicalTrial(pcoll: beam.PCollection) -> beam.PCollection[ClinicalTria
 
 
 @ptransform_fn
-def RowAsDrug(pcoll: beam.PCollection) -> beam.PCollection[Drug]:
+def RowAsDrug(pcoll: beam.PCollection[beam.Row]) -> beam.PCollection[Drug]:
     return pcoll | beam.Map(
         lambda row: Drug(
             id=row.id,
@@ -67,7 +69,7 @@ def RowAsDrug(pcoll: beam.PCollection) -> beam.PCollection[Drug]:
 
 
 @ptransform_fn
-def RowAsPubmed(pcoll: beam.PCollection) -> beam.PCollection[Pubmed]:
+def RowAsPubmed(pcoll: beam.PCollection[beam.Row]) -> beam.PCollection[Pubmed]:
     return pcoll | beam.Map(
         lambda row: Pubmed(
             id=row.id,
