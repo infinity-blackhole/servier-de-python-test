@@ -21,10 +21,7 @@ def SplitTitleByWord(
     """A Beam transform that splits the title of an element by word."""
 
     def _split(element):
-        words = element.title.translate(
-            str.maketrans("", "", string.punctuation)
-        ).split()
-        for word in words:
+        for word in element.title.split():
             yield (word.upper(), element)
 
     return pcoll | beam.FlatMap(_split)
