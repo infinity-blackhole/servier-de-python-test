@@ -100,3 +100,18 @@ def MatchPubmedDrugs(
         | beam.CoGroupByKey()
         | beam.FlatMap(_unnest)
     )
+
+
+@ptransform_fn
+def MatchDrugs(
+    pcolls: typing.Tuple[beam.PCollection, beam.PCollection, beam.PCollection],
+) -> beam.PCollection[Mention]:
+    """A Beam transform that matches drugs mentioned in Pubmed elements."""
+
+    clinical_trials_mentions = (pcolls[0], pcolls[1]) | MatchClinicalTrialDrugs()
+    pubmed_mentions = (pcolls[0], pcolls[2]) | MatchPubmedDrugs()
+
+    return (
+        clinical_trials_mentions,
+        pubmed_mentions,
+    ) | beam.Flatten().with_output_types(Mention)

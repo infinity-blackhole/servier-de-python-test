@@ -1,47 +1,19 @@
 """Input/output utilities for the Servier de Python project."""
 
 import typing
-
 import apache_beam as beam
-import pandas as pd
 from apache_beam.transforms.ptransform import ptransform_fn
 
 
-class ClinicalTrial(typing.NamedTuple):
-    """Represents a clinical trial."""
-
-    id: str
-    title: str
-    date: pd.Timestamp
-    journal: str
-
-
-class Drug(typing.NamedTuple):
-    """Represents a drug."""
-
-    id: str
-    name: str
-
-
-class Pubmed(typing.NamedTuple):
-    """Represents a publication in PubMed."""
-
-    id: str
-    title: str
-    date: pd.Timestamp
-    journal: str
-
-
-class Mention(typing.NamedTuple):
-    """Represents a mention of a drug in a publication."""
-
-    drug_id: str
-    drug_name: str
-    publication_type: str
-    publication_id: str
-    publication_title: str
-    publication_date: pd.Timestamp
-    publication_journal: str
+from servier_de_python.schemas import (
+    ClinicalTrial,
+    Drug,
+    Pubmed,
+    Mention,
+    RowAsClinicalTrial,
+    RowAsDrug,
+    RowAsPubmed,
+)
 
 
 @ptransform_fn
@@ -68,14 +40,7 @@ def ReadFromClinicalTrials(
             dayfirst=True,
             cache_dates=True,
         )
-        | beam.Map(
-            lambda row: ClinicalTrial(
-                id=row.id,
-                title=row.title,
-                date=row.date,
-                journal=row.journal,
-            )
-        )
+        | RowAsClinicalTrial()
     )
 
 
@@ -92,12 +57,7 @@ def ReadFromDrugs(pcoll: beam.PCollection, path: str) -> beam.PCollection[Drug]:
             dtype={"id": str, "name": str},
             skip_blank_lines=True,
         )
-        | beam.Map(
-            lambda row: Drug(
-                id=row.id,
-                name=row.name,
-            )
-        )
+        | RowAsDrug()
     )
 
 
@@ -123,14 +83,7 @@ def ReadFromPubmedsCsv(pcoll: beam.PCollection, path: str) -> beam.PCollection[P
             dayfirst=True,
             cache_dates=True,
         )
-        | beam.Map(
-            lambda row: Pubmed(
-                id=row.id,
-                title=row.title,
-                date=row.date,
-                journal=row.journal,
-            )
-        )
+        | RowAsPubmed()
     )
 
 
@@ -151,14 +104,7 @@ def ReadFromPubmedsJson(pcoll: beam.PCollection, path: str) -> beam.PCollection[
                 "journal": str,
             },
         )
-        | beam.Map(
-            lambda row: Pubmed(
-                id=row.id,
-                title=row.title,
-                date=row.date,
-                journal=row.journal,
-            )
-        )
+        | RowAsPubmed()
     )
 
 
@@ -174,7 +120,9 @@ def ReadFromPubmeds(pcoll: beam.PCollection, path: str) -> beam.PCollection[Pubm
 
 
 @ptransform_fn
-def WriteDrugMention(pcoll: beam.PCollection[Mention], path: str) -> beam.PCollection:
+def WriteDrugMention(
+    pcoll: beam.PCollection[Mention], path: str
+) -> beam.PCollection[Mention]:
     """A Beam PTransform for writing drug mentions to a JSON file."""
 
     return pcoll | beam.io.WriteToJson(
