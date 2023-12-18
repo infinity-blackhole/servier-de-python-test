@@ -51,7 +51,8 @@ def SplitPubmedTitleByWord(
 @ptransform_fn
 def MatchClinicalTrialDrugMentions(
     pcoll: beam.PCollection[ClinicalTrial],
-    drugs: beam.PCollection[typing.Tuple[str, Drug]],
+    drug: beam.PCollection[typing.Tuple[str, Drug]],
+    threshold: float = 0.8,
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in ClinicalTrial elements."""
 
@@ -60,7 +61,7 @@ def MatchClinicalTrialDrugMentions(
             matcher = SequenceMatcher(
                 lambda x: x in string.punctuation, element[0], drug.name
             )
-            if matcher.ratio() < 0.8:
+            if matcher.ratio() < threshold:
                 continue
 
             yield Mention(
@@ -73,13 +74,14 @@ def MatchClinicalTrialDrugMentions(
                 publication_journal=element[1].journal,
             )
 
-    return pcoll | beam.FlatMap(_join, drugs=beam.pvalue.AsList(drugs))
+    return pcoll | beam.FlatMap(_join, drugs=beam.pvalue.AsList(drug))
 
 
 @ptransform_fn
 def MatchPubmedDrugMentions(
     pcoll: beam.PCollection[Pubmed],
     drug: beam.PCollection[typing.Tuple[str, Drug]],
+    threshold: float = 0.8,
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in Pubmed elements."""
 
@@ -89,7 +91,7 @@ def MatchPubmedDrugMentions(
                 lambda x: x in string.punctuation, element[0], drug.name
             )
 
-            if matcher.ratio() < 0.8:
+            if matcher.ratio() < threshold:
                 continue
 
             yield Mention(
@@ -110,11 +112,14 @@ def MatchDrugMentions(
     pcoll: beam.PCollection[Drug],
     clinical_trials: beam.PCollection[typing.Tuple[str, ClinicalTrial]],
     pubmed: beam.PCollection[typing.Tuple[str, Pubmed]],
+    threshold: float = 0.8,
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in Pubmed elements."""
 
-    clinical_trials_mentions = clinical_trials | MatchClinicalTrialDrugMentions(pcoll)
-    pubmed_mentions = pubmed | MatchPubmedDrugMentions(pcoll)
+    clinical_trials_mentions = clinical_trials | MatchClinicalTrialDrugMentions(
+        drug=pcoll, threshold=threshold
+    )
+    pubmed_mentions = pubmed | MatchPubmedDrugMentions(drug=pcoll, threshold=threshold)
 
     return (
         clinical_trials_mentions,
