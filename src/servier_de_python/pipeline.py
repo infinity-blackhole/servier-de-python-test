@@ -6,19 +6,12 @@ import typing
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-from servier_de_python.io import (
-    ReadFromClinicalTrials,
-    ReadFromDrugs,
-    ReadFromPubmed,
-    WriteDrugMention,
-    Drug,
-)
-from servier_de_python.transforms import (
-    SplitClinicalTrialTitleByWord,
-    SplitPubmedTitleByWord,
-    MatchClinicalTrialDrugs,
-    MatchPubmedDrugs,
-)
+from servier_de_python.io import (Drug, ReadFromClinicalTrials, ReadFromDrugs,
+                                  ReadFromPubmeds, WriteDrugMention)
+from servier_de_python.transforms import (MatchClinicalTrialDrugs,
+                                          MatchPubmedDrugs,
+                                          SplitClinicalTrialTitleByWord,
+                                          SplitPubmedTitleByWord)
 
 
 def run():
@@ -57,7 +50,7 @@ def run():
         )
         pubmed = (
             tuple(
-                p | f"ReadFromPubmed{i}" >> ReadFromPubmed(path)
+                p | f"ReadFromPubmeds{i}" >> ReadFromPubmeds(path)
                 for i, path in enumerate(args.pubmed_dataset_path)
             )
             | "FlattenPubmed" >> beam.Flatten()
