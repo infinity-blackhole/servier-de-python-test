@@ -1,20 +1,18 @@
 """Pipeline to find drug mentions in clinical trials and pubmed articles. """
 
 import argparse
-import typing
 
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
 from servier_de_python.io import (
-    Drug,
     ReadFromClinicalTrials,
     ReadFromDrugs,
     ReadFromPubmeds,
-    WriteDrugMention,
+    WriteDrugMentions,
 )
 from servier_de_python.transforms import (
-    MatchDrugs,
+    MatchDrugMentions,
     SplitClinicalTrialTitleByWord,
     SplitPubmedTitleByWord,
 )
@@ -73,8 +71,8 @@ def run():
 
         (
             drugs
-            | MatchDrugs(clinical_trials=clinical_trials, pubmed=pubmed)
-            | WriteDrugMention(args.output)
+            | MatchDrugMentions(clinical_trials=clinical_trials, pubmed=pubmed)
+            | WriteDrugMentions(args.output)
         )
 
 
