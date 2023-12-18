@@ -1,6 +1,7 @@
 """A module that contains Beam transforms for the Servier DE Python test."""
 
 import string
+from difflib import SequenceMatcher
 import typing
 
 import apache_beam as beam
@@ -49,69 +50,71 @@ def SplitPubmedTitleByWord(
 
 @ptransform_fn
 def MatchClinicalTrialDrugMentions(
-    pcoll: beam.PCollection[Drug],
-    clinical_trials: beam.PCollection[ClinicalTrial],
+    pcoll: beam.PCollection[ClinicalTrial],
+    drugs: beam.PCollection[typing.Tuple[str, Drug]],
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in ClinicalTrial elements."""
 
-    def _unnest(element):
-        for drug in element[1]["drugs"]:
-            for clinical_trial in element[1]["clinical_trials"]:
-                yield Mention(
-                    drug_id=drug.id,
-                    drug_name=drug.name,
-                    publication_type="CLINICAL_TRIAL",
-                    publication_id=clinical_trial.id,
-                    publication_title=clinical_trial.title,
-                    publication_date=clinical_trial.date,
-                    publication_journal=clinical_trial.journal,
-                )
+    def _join(element, drugs):
+        for drug in drugs:
+            matcher = SequenceMatcher(
+                lambda x: x in string.punctuation, element[0], drug.name
+            )
+            if matcher.ratio() < 0.8:
+                continue
 
-    return (
-        {
-            "drugs": pcoll,
-            "clinical_trials": clinical_trials,
-        }
-        | beam.CoGroupByKey()
-        | beam.FlatMap(_unnest)
-    )
+            yield Mention(
+                drug_id=drug.id,
+                drug_name=drug.name,
+                publication_type="CLINICAL_TRIAL",
+                publication_id=element[1].id,
+                publication_title=element[1].title,
+                publication_date=element[1].date,
+                publication_journal=element[1].journal,
+            )
+
+    return pcoll | beam.FlatMap(_join, drugs=beam.pvalue.AsList(drugs))
 
 
 @ptransform_fn
 def MatchPubmedDrugMentions(
-    pcoll: beam.PCollection[Drug],
-    pubmed: beam.PCollection[Pubmed],
+    pcoll: beam.PCollection[Pubmed],
+    drug: beam.PCollection[typing.Tuple[str, Drug]],
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in Pubmed elements."""
 
-    def _unnest(element):
-        for drug in element[1]["drugs"]:
-            for pubmed in element[1]["pubmed"]:
-                yield Mention(
-                    drug_id=drug.id,
-                    drug_name=drug.name,
-                    publication_type="PUBMED",
-                    publication_id=pubmed.id,
-                    publication_title=pubmed.title,
-                    publication_date=pubmed.date,
-                    publication_journal=pubmed.journal,
-                )
+    def _join(element, drugs):
+        for drug in drugs:
+            matcher = SequenceMatcher(
+                lambda x: x in string.punctuation, element[0], drug.name
+            )
 
-    return (
-        {"drugs": pcoll, "pubmed": pubmed} | beam.CoGroupByKey() | beam.FlatMap(_unnest)
-    )
+            if matcher.ratio() < 0.8:
+                continue
+
+            yield Mention(
+                drug_id=drug.id,
+                drug_name=drug.name,
+                publication_type="PUBMED",
+                publication_id=element[1].id,
+                publication_title=element[1].title,
+                publication_date=element[1].date,
+                publication_journal=element[1].journal,
+            )
+
+    return pcoll | beam.FlatMap(_join, drugs=beam.pvalue.AsList(drug))
 
 
 @ptransform_fn
 def MatchDrugMentions(
     pcoll: beam.PCollection[Drug],
-    clinical_trials: beam.PCollection[ClinicalTrial],
-    pubmed: beam.PCollection[Pubmed],
+    clinical_trials: beam.PCollection[typing.Tuple[str, ClinicalTrial]],
+    pubmed: beam.PCollection[typing.Tuple[str, Pubmed]],
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in Pubmed elements."""
 
-    clinical_trials_mentions = pcoll | MatchClinicalTrialDrugMentions(clinical_trials)
-    pubmed_mentions = pcoll | MatchPubmedDrugMentions(pubmed)
+    clinical_trials_mentions = clinical_trials | MatchClinicalTrialDrugMentions(pcoll)
+    pubmed_mentions = pubmed | MatchPubmedDrugMentions(pcoll)
 
     return (
         clinical_trials_mentions,
