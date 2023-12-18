@@ -2,6 +2,7 @@
 
 import typing
 
+import pandas as pd
 import apache_beam as beam
 
 
@@ -10,7 +11,7 @@ class ClinicalTrial(typing.NamedTuple):
 
     id: str
     title: str
-    date: str
+    date: pd.Timestamp
     journal: str
 
 
@@ -26,7 +27,7 @@ class Pubmed(typing.NamedTuple):
 
     id: str
     title: str
-    date: str
+    date: pd.Timestamp
     journal: str
 
 
@@ -38,7 +39,7 @@ class Mention(typing.NamedTuple):
     publication_type: str
     publication_id: str
     publication_title: str
-    publication_date: str
+    publication_date: pd.Timestamp
     publication_journal: str
 
 
