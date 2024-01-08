@@ -3,12 +3,11 @@
 import apache_beam as beam
 from apache_beam.transforms.ptransform import ptransform_fn
 
-
 from servier_de_python.schemas import (
     ClinicalTrial,
     Drug,
-    Pubmed,
     Mention,
+    Pubmed,
     RowAsClinicalTrial,
     RowAsDrug,
     RowAsPubmed,

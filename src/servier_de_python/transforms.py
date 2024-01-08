@@ -1,15 +1,14 @@
 """A module that contains Beam transforms for the Servier DE Python test."""
 
 import string
-from difflib import SequenceMatcher
 import typing
+from difflib import SequenceMatcher
 
 import apache_beam as beam
 from apache_beam.transforms.ptransform import ptransform_fn
 
-from servier_de_python.schemas import Drug
 from servier_de_python.io import ClinicalTrial, Mention, Pubmed
-
+from servier_de_python.schemas import Drug
 
 T = typing.TypeVar("T")
 
@@ -112,7 +111,7 @@ def MatchPubmedDrugMentions(
 def MatchDrugMentions(
     pcoll: beam.PCollection[Drug],
     clinical_trials: beam.PCollection[typing.Tuple[str, ClinicalTrial]],
-    pubmed: beam.PCollection[typing.Tuple[str, Pubmed]],
+    pubmeds: beam.PCollection[typing.Tuple[str, Pubmed]],
     threshold: float = 0.8,
 ) -> beam.PCollection[Mention]:
     """A Beam transform that matches drugs mentioned in Pubmed elements."""
@@ -120,7 +119,7 @@ def MatchDrugMentions(
     clinical_trials_mentions = clinical_trials | MatchClinicalTrialDrugMentions(
         drug=pcoll, threshold=threshold
     )
-    pubmed_mentions = pubmed | MatchPubmedDrugMentions(drug=pcoll, threshold=threshold)
+    pubmed_mentions = pubmeds | MatchPubmedDrugMentions(drug=pcoll, threshold=threshold)
 
     return (
         clinical_trials_mentions,
